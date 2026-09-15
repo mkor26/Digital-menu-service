@@ -1,16 +1,32 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+def show_dish(name, price, category):  #  Показывает информацию о блюде
+    return f"{name} ({category}) — {price} руб."
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def check_availability(in_stock):  #  Показывает в наличии ли блюдо
+    if in_stock:
+        return "Блюдо в наличии"
+    return "Блюдо временно недоступно"
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+def calculate_order(price, quantity, discount_percent):  #  Считает итоговую стоимость заказа с учётом скидки.
+    total = price * quantity
+    discount = total * discount_percent / 100
+    return total - discount
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+dish_name = "Капучино"
+dish_price = 250.0
+dish_category = "Напитки"
+dish_in_stock = True
+
+order_quantity = 2
+order_discount = 10.0
+
+print("=== Электронное меню ===")
+print(show_dish(dish_name, dish_price, dish_category))
+print(check_availability(dish_in_stock))
+
+order_total = calculate_order(dish_price, order_quantity, order_discount)
+print(f"Заказ: {order_quantity} x {dish_name}")
+print(f"Скидка: {order_discount}%")
+print(f"Итого к оплате: {order_total:.2f} руб.")
