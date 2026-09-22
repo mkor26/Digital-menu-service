@@ -26,25 +26,79 @@
 
 ## Основные сущности
 
-- блюдо - Позиция меню: название, описание, состав, цена
-- категория - Раздел меню (напитки, супы, десерты и т. д.)
-- ресторан - Место, которому принадлежит меню
-- состав - Продукты из которых состоит блюдо 
+- **Блюдо (Dish)** — позиция меню
+- **Категория (Category)** — раздел меню
+- **Пользователь (User)** — посетитель или официант
+- **Заказ (Order)** — заказ блюда пользователем
 
+Один заказ связывает объект `Dish` и объект `User`. Отменённый
+заказ не удаляется, а меняет признак `is_cancelled`.
 
-## Основные функции
+### Dish — блюдо
+Атрибуты: `id`, `name`, `category`, `price`, `in_stock`, `description`.
 
-- show_dish - просмотр информации о блюде.
-- check_availability - Проверка доступности блюда.
-- calculate_order - расчет стоимости заказа.
+Методы:
+- `is_available()` — доступно ли блюдо
+- `is_affordable(max_price)` — укладывается ли в цену
+- `__str__()` — строковое представление
+- `from_data(data)` — создание объекта из словаря (classmethod)
+- `validate_price(price)` — проверка корректности цены (staticmethod)
 
+### Category — категория
+Атрибуты: `id`, `name`.
 
-## План развития
+Методы: `__str__()`, `from_data(data)`, `to_data()`.
 
-На следующих этапах планируется:
+### User — пользователь
+Атрибуты: `id`, `name`, `email`.
 
-- разработка веб-приложения на Django;
-- подключение базы данных;
-- реализация пользователей и ролей;
-- разработка REST API;
-- контейнеризация приложения в Docker;
+Методы: `__str__()`, `from_data(data)`, `to_data()`.
+
+### Order — заказ
+Атрибуты: `id`, `dish` (объект Dish), `user` (объект User),
+`quantity`, `discount_percent`, `is_cancelled`.
+
+Методы:
+- `total()` — стоимость с учётом скидки
+- `cancel()` — отмена заказа
+- `status()` — текстовый статус
+- `__str__()`.
+
+User создаёт -> Order - относится к ->Dish
+
+`Order` хранит ссылки на `Dish` и `User`. Через заказ доступны данные
+связанных объектов: `order.dish.name`, `order.user.email`.
+
+## Структура проекта
+
+Digital-menu-service/
+- main.py
+- storage.py
+-  utils.py
+-  models/
+- - init.py
+- - dishes.py 
+- - categories.py
+- - users.py
+- - orders.py
+- data/
+- - dishes.json
+- - categories.json
+- - users.json
+- - orders.json
+- tests/
+- - test_dishes.py
+- - test_categories.py
+- - test_users.py
+- - test_orders.py
+- - test_storage.py 
+- README.md
+
+## Хранение данных
+
+Данные хранятся в JSON-файлах в папке `data/`.
+
+При загрузке данные JSON преобразуются в объекты классов `Dish`,
+`Category`, `User`, `Order`. В `orders.json` хранятся только
+идентификаторы `dish_id` и `user_id`; при загрузке они превращаются
+в ссылки на объекты.
