@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "name": "Капучино",
+        "category": "Напитки",
+        "price": 250.0,
+        "in_stock": true,
+        "description": "Кофейный напиток с молочной пеной"
+    },
+    {
+        "id": 2,
+        "name": "Цезарь",
+        "category": "Салаты",
+        "price": 450.0,
+        "in_stock": true,
+        "description": "Салат с курицей и пармезаном"
+    },
+    {
+        "id": 3,
+        "name": "Чизкейк",
+        "category": "Десерты",
+        "price": 320.0,
+        "in_stock": false,
+        "description": "Классический чизкейк"
+    }
+]
