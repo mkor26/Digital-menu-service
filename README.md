@@ -94,6 +94,15 @@ Digital-menu-service/
 - - test_storage.py 
 - README.md
 
+### Реализованные страницы
+| URL | View | Назначение |
+|---|---|---|
+| `/` | `homepage.views.index` | Главная |
+| `/menu/` | `menu.views.dishes` | Список блюд |
+| `/menu/<int:dish_id>/` | `menu.views.dish_detail` | Карточка блюда |
+| `/orders/` | `orders.views.orders` | Список заказов |
+| `/orders/<int:order_id>/` | `orders.views.order_detail` | Карточка заказа |
+
 ## Хранение данных
 
 Данные хранятся в JSON-файлах в папке `data/`.
@@ -102,3 +111,8 @@ Digital-menu-service/
 `Category`, `User`, `Order`. В `orders.json` хранятся только
 идентификаторы `dish_id` и `user_id`; при загрузке они превращаются
 в ссылки на объекты.
+
+### Запуск
+```bash
+py manage.py migrate
+py manage.py runserver

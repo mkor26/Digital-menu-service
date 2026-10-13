@@ -1,8 +1,4 @@
-"""Точка запуска приложения «Digital Menu Service».
 
-Демонстрационный сценарий работы с объектной моделью:
-блюда, категории, пользователи, заказы.
-"""
 
 from models import Dish
 from models.categories import add_category, show_categories
@@ -44,7 +40,7 @@ def _seed_data(
     categories: list,
     users: list,
 ) -> None:
-    """Заполнить пустые коллекции стартовыми данными."""
+
     if not dishes:
         add_dish(
             dishes, "Капучино", "Напитки", 250.0,
@@ -70,7 +66,6 @@ def _seed_data(
 
 
 def main() -> None:
-    """Демонстрационный сценарий работы с объектами проекта."""
     print("=== Digital Menu Service ===")
 
     # Загрузка данных

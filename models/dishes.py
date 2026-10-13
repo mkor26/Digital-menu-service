@@ -4,17 +4,6 @@ from typing import Optional
 
 
 class Dish:
-    """Блюдо из меню заведения.
-
-    Атрибуты:
-        id: уникальный идентификатор блюда;
-        name: название блюда;
-        category: название категории;
-        price: цена в рублях;
-        in_stock: есть ли блюдо в наличии;
-        description: краткое описание.
-    """
-
     def __init__(
         self,
         dish_id: int,

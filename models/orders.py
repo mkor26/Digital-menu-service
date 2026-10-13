@@ -10,12 +10,12 @@ from .users import User
 
 
 class Order:
-    """Заказ блюда пользователем.
+    """Заказ пользователя.
 
     Атрибуты:
-        id: идентификатор заказа;
-        dish: объект Dish, который заказали;
-        user: объект User, который заказал;
+        id: уникальный идентификатор заказа;
+        dish: объект Dish — блюдо заказа;
+        user: объект User — кто сделал заказ;
         quantity: количество порций;
         discount_percent: скидка в процентах;
         is_cancelled: признак отмены заказа.
@@ -37,11 +37,24 @@ class Order:
         self.discount_percent = discount_percent
         self.is_cancelled = False
 
+    @property
+    def full_price(self) -> float:
+        """Стоимость заказа без скидки."""
+        return self.dish.price * self.quantity
+
+    @property
+    def discount_sum(self) -> float:
+        """Сумма скидки в рублях."""
+        return self.full_price * self.discount_percent / 100
+
+    @property
     def total(self) -> float:
-        """Посчитать итоговую стоимость заказа с учётом скидки."""
-        gross = self.dish.price * self.quantity
-        discount = gross * self.discount_percent / 100
-        return gross - discount
+        """Итоговая стоимость заказа с учётом скидки.
+
+        Сделано свойством, чтобы в шаблонах и f-строках писать
+        order.total, а не order.total().
+        """
+        return self.full_price - self.discount_sum
 
     def cancel(self) -> None:
         """Отменить заказ."""
@@ -55,9 +68,23 @@ class Order:
         """Вернуть строковое представление заказа."""
         return (
             f"Заказ №{self.id}: {self.quantity} × {self.dish.name} "
-            f"для {self.user.name} — {self.total():.2f} руб. "
+            f"для {self.user.name} — {self.total:.2f} руб. "
             f"[{self.status()}]"
         )
+
+    def to_data(self) -> dict:
+        """Преобразовать заказ в словарь для JSON.
+
+        Хранятся только идентификаторы связанных объектов.
+        """
+        return {
+            "id": self.id,
+            "dish_id": self.dish.id if self.dish else None,
+            "user_id": self.user.id if self.user else None,
+            "quantity": self.quantity,
+            "discount_percent": self.discount_percent,
+            "is_cancelled": self.is_cancelled,
+        }
 
 
 def add_order(

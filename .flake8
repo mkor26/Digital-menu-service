@@ -1,0 +1,12 @@
+[flake8]
+max-line-length = 79
+extend-exclude =
+    venv,
+    .venv,
+    migrations,
+    __pycache__,
+    menu_project/settings.py
+per-file-ignores =
+    */admin.py: F401
+    */models.py: F401
+    */tests.py: F401

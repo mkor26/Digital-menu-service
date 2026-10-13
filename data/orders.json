@@ -1,18 +1,58 @@
 [
-    {
-        "id": 1,
-        "dish_id": 1,
-        "user_id": 1,
-        "quantity": 2,
-        "discount_percent": 10.0,
-        "is_cancelled": true
-    },
-    {
-        "id": 2,
-        "dish_id": 1,
-        "user_id": 1,
-        "quantity": 2,
-        "discount_percent": 10.0,
-        "is_cancelled": true
-    }
+  {
+    "id": 1,
+    "dish_id": 1,
+    "user_id": 1,
+    "quantity": 2,
+    "discount_percent": 10.0,
+    "is_cancelled": false
+  },
+  {
+    "id": 2,
+    "dish_id": 5,
+    "user_id": 2,
+    "quantity": 1,
+    "discount_percent": 0.0,
+    "is_cancelled": false
+  },
+  {
+    "id": 3,
+    "dish_id": 4,
+    "user_id": 3,
+    "quantity": 3,
+    "discount_percent": 15.0,
+    "is_cancelled": false
+  },
+  {
+    "id": 4,
+    "dish_id": 7,
+    "user_id": 1,
+    "quantity": 1,
+    "discount_percent": 0.0,
+    "is_cancelled": true
+  },
+  {
+    "id": 5,
+    "dish_id": 6,
+    "user_id": 4,
+    "quantity": 4,
+    "discount_percent": 5.0,
+    "is_cancelled": false
+  },
+  {
+    "id": 6,
+    "dish_id": 2,
+    "user_id": 3,
+    "quantity": 2,
+    "discount_percent": 20.0,
+    "is_cancelled": false
+  },
+  {
+    "id": 7,
+    "dish_id": 1,
+    "user_id": 4,
+    "quantity": 1,
+    "discount_percent": 0.0,
+    "is_cancelled": true
+  }
 ]

@@ -33,14 +33,14 @@ def test_order_total():
     dish = _make_dish()
     user = _make_user()
     order = Order(1, dish, user, quantity=2, discount_percent=10.0)
-    assert order.total() == 450.0
+    assert order.total == 450.0
 
 
 def test_order_total_no_discount():
     dish = _make_dish()
     user = _make_user()
     order = Order(1, dish, user, quantity=3)
-    assert order.total() == 750.0
+    assert order.total == 750.0
 
 
 def test_order_cancel():

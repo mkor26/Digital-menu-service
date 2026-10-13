@@ -87,11 +87,7 @@ def save_users(filename: str, users: list[User]) -> None:
 def load_orders(
     filename: str, dishes: list[Dish], users: list[User]
 ) -> list[Order]:
-    """Загрузить заказы из JSON, восстановив связи с Dish и User.
-
-    В JSON хранятся только идентификаторы dish_id и user_id —
-    при загрузке они превращаются в ссылки на объекты.
-    """
+    """Загрузить заказы из JSON, восстановив связи с Dish и User."""
     data = _load_json(filename)
     orders: list[Order] = []
 
@@ -120,15 +116,18 @@ def load_orders(
 
 def save_orders(filename: str, orders: list[Order]) -> None:
     """Сохранить заказы в JSON (только идентификаторы связанных объектов)."""
-    data = [
-        {
-            "id": order.id,
-            "dish_id": order.dish.id,
-            "user_id": order.user.id,
-            "quantity": order.quantity,
-            "discount_percent": order.discount_percent,
-            "is_cancelled": order.is_cancelled,
-        }
-        for order in orders
-    ]
-    _save_json(filename, data)
+    _save_json(filename, [order.to_data() for order in orders])
+
+
+# === Удобная обёртка для веб-слоя ===
+
+def load_all(
+    dishes_path: str = "data/dishes.json",
+    users_path: str = "data/users.json",
+    orders_path: str = "data/orders.json",
+) -> tuple[list[Dish], list[User], list[Order]]:
+    """Загрузить все данные проекта разом — удобно для Django-view."""
+    dishes = load_dishes(dishes_path)
+    users = load_users(users_path)
+    orders = load_orders(orders_path, dishes, users)
+    return dishes, users, orders
