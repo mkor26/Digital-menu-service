@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if dish %}{{ dish.name }} - Меню{% else %}Блюдо не найдено{% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if dish %}
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">{{ dish.name }}</h1>
+                <p class="card-text"><strong>Категория:</strong> {{ dish.category }}</p>
+                <p class="card-text"><strong>Цена:</strong> {{ dish.price }} руб.</p>
+
+                <p class="card-text">
+                    <strong>Наличие:</strong>
+                    {% if dish.in_stock %}
+                        <span class="badge bg-success">В наличии</span>
+                    {% else %}
+                        <span class="badge bg-danger">Нет в наличии</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    {% else %}
+        <h1 class="text-danger">Блюдо не найдено</h1>
+        <p>Блюдо с указанным идентификатором отсутствует.</p>
+    {% endif %}
+    <a href="{% url 'menu:dishes' %}" class="btn btn-outline-secondary mt-3">← к меню</a>
+{% endblock %}

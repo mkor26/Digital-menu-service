@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if order %}Заказ №{{ order.id }}{% else %}Заказ не найден{% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if order %}
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Заказ №{{ order.id }}</h1>
+                <p class="card-text"><strong>Блюдо:</strong> {{ order.dish.name }}</p>
+                <p class="card-text"><strong>Пользователь:</strong> {{ order.user.name }}</p>
+                <p class="card-text"><strong>Сумма:</strong> {{ order.total }} руб.</p>
+                <p class="card-text">
+                    <strong>Статус:</strong>
+                    {% include "orders/includes/order_status.html" %}
+                </p>
+            </div>
+        </div>
+    {% else %}
+        <h1 class="text-danger">Заказ не найден</h1>
+    {% endif %}
+    <a href="{% url 'orders:orders' %}" class="btn btn-outline-secondary mt-3">← к заказам</a>
+{% endblock %}

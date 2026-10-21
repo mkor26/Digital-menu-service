@@ -1,0 +1,13 @@
+<article class="card dish-card">
+    <div class="card-body">
+        <h2 class="card-title">
+            {{ dish.name|default:"Без названия" }}
+        </h2>
+        <p class="card-text">
+            Категория: {{ dish.category }} | Цена: {{ dish.price }} руб.
+        </p>
+        <a href="{% url 'menu:detail' dish.id %}" class="btn btn-primary btn-sm">
+            Подробнее
+        </a>
+    </div>
+</article>

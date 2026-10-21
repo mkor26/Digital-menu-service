@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Меню - Электронное меню{% endblock %}
+
+{% block content %}
+    <h1>Меню</h1>
+    <p>Всего блюд: {{ dishes|length }}</p> <!-- Фильтр длины -->
+
+    {% for dish in dishes %}
+        {% include "menu/includes/dish_card.html" %}
+    {% empty %}
+        <p>Блюда не найдены.</p>
+    {% endfor %}
+{% endblock %}
