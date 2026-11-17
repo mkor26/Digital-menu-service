@@ -11,6 +11,7 @@
                 <h1 class="card-title">{{ dish.name }}</h1>
                 <p class="card-text"><strong>Категория:</strong> {{ dish.category }}</p>
                 <p class="card-text"><strong>Цена:</strong> {{ dish.price }} руб.</p>
+                <p class="card-text"><strong>Описание:</strong> {{ dish.description|default:"Описание отсутствует" }}</p>
 
                 <p class="card-text">
                     <strong>Наличие:</strong>

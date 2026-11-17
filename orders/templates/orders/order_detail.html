@@ -9,8 +9,11 @@
         <div class="card">
             <div class="card-body">
                 <h1 class="card-title">Заказ №{{ order.id }}</h1>
-                <p class="card-text"><strong>Блюдо:</strong> {{ order.dish.name }}</p>
-                <p class="card-text"><strong>Пользователь:</strong> {{ order.user.name }}</p>
+                <p class="card-text"><strong>Блюдо:</strong> {{ order.dish_name }}</p>
+                <p class="card-text"><strong>Пользователь:</strong> {{ order.user_name }}</p>
+                <p class="card-text"><strong>Пользователь:</strong> {{ order.user_email }}</p>
+                <p class="card-text"><strong>Количество:</strong> {{ order.quantity }}</p>
+                <p class="card-text"><strong>Скидка:</strong> {{ order.discount_percent }}%</p>
                 <p class="card-text"><strong>Сумма:</strong> {{ order.total }} руб.</p>
                 <p class="card-text">
                     <strong>Статус:</strong>

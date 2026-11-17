@@ -4,11 +4,36 @@
 
 {% block content %}
     <h1>Меню</h1>
-    <p>Всего блюд: {{ dishes|length }}</p> <!-- Фильтр длины -->
+    <p>Найдено блюд: {{ dishes|length }}</p>
+
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label for="category" class="form-label">Категория</label>
+            <select id="category" name="category" class="form-select">
+                <option value="">Все категории</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if selected_category == category.id %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="max_price" class="form-label">Максимальная цена</label>
+            <input id="max_price" name="max_price" type="number" min="0" step="0.01" value="{{ max_price|default_if_none:'' }}" class="form-control">
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <div class="form-check">
+                <input id="available" name="available" value="1" type="checkbox" class="form-check-input" {% if available_only %}checked{% endif %}>
+                <label for="available" class="form-check-label">Только в наличии</label>
+            </div>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Найти</button>
+        </div>
+    </form>
 
     {% for dish in dishes %}
         {% include "menu/includes/dish_card.html" %}
     {% empty %}
-        <p>Блюда не найдены.</p>
+        <p>Блюда по заданным условиям не найдены.</p>
     {% endfor %}
 {% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика - Электронное меню{% endblock %}
+
+{% block content %}
+    <h1>Статистика меню</h1>
+    <div class="row g-3 mb-4">
+        <div class="col-md-4"><div class="card"><div class="card-body"><h2 class="h5">Всего блюд</h2><p class="display-6">{{ summary.dishes_count|default:0 }}</p></div></div></div>
+        <div class="col-md-4"><div class="card"><div class="card-body"><h2 class="h5">В наличии</h2><p class="display-6">{{ summary.available_count|default:0 }}</p></div></div></div>
+        <div class="col-md-4"><div class="card"><div class="card-body"><h2 class="h5">Активные заказы</h2><p class="display-6">{{ orders_count.active_orders|default:0 }}</p></div></div></div>
+    </div>
+    <h2>Цены</h2>
+    <p>Минимальная: {{ summary.min_price|default:"—" }} руб.</p>
+    <p>Максимальная: {{ summary.max_price|default:"—" }} руб.</p>
+    <p>Средняя: {{ summary.average_price|default:"—" }} руб.</p>
+    <h2 class="mt-4">Количество блюд по категориям</h2>
+    <table class="table table-striped">
+        <thead><tr><th>Категория</th><th>Количество блюд</th></tr></thead>
+        <tbody>
+        {% for item in categories %}
+            <tr><td>{{ item.category }}</td><td>{{ item.dishes_count }}</td></tr>
+        {% empty %}
+            <tr><td colspan="2">Данные отсутствуют</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

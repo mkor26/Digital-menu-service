@@ -1,18 +1,19 @@
+"""Представления заказов, использующие SQL JOIN для связанных данных."""
+
 from django.shortcuts import render
-from models.orders import find_order_by_id
-from storage import load_all
+
+from db.database import get_order, get_orders
+
 
 def orders(request):
-    _, _, orders_list = load_all()
-    return render(request, "orders/order_list.html", {"orders": orders_list})
+    return render(request, "orders/order_list.html", {"orders": get_orders()})
+
 
 def order_detail(request, order_id):
-    _, _, orders_list = load_all()
-    order = find_order_by_id(orders_list, order_id)
-    
+    order = get_order(order_id)
     return render(
-        request, 
-        "orders/order_detail.html", 
+        request,
+        "orders/order_detail.html",
         {"order": order},
-        status=404 if order is None else 200
+        status=404 if order is None else 200,
     )
