@@ -44,56 +44,103 @@
 как исходный формат данных для импорта и как часть ранее выполненной консольной
 реализации.
 
-## Страницы сайта
+## Практическая работа 9 — Django ORM
 
-| URL | Назначение | Источник данных после ПР7 |
-|---|---|---|
-| `/` | Главная | Статическая информация |
-| `/menu/` | Список блюд и фильтры | SQLite, `SELECT`, `WHERE`, `JOIN` |
-| `/menu/<int:dish_id>/` | Карточка блюда | SQLite, параметризованный `SELECT` |
-| `/orders/` | Список заказов | SQLite, `JOIN` трёх таблиц |
-| `/orders/<int:order_id>/` | Карточка заказа | SQLite, `JOIN` и фильтрация по ID |
-| `/statistics/` | Статистика меню и заказов | SQLite, `COUNT`, `MIN`, `MAX`, `AVG`, `GROUP BY` |
+Django создаёт таблицы `menu_category`, `menu_dish`, `orders_customer`
+и `orders_order` в стандартной базе `db.sqlite3`. Миграции приложений
+`menu` и `orders` управляют их схемой. Модель `Customer` хранит
+покупателей проекта, а встроенная модель Django используется для входа
+в админку. Связи реализованы через `ForeignKey` с `PROTECT`. Обратные
+связи доступны через `category.dishes`, `dish.orders`, `customer.orders`.
 
-## Установка и запуск
+Команда `import_pr7` читает базу ПР7 в режиме только чтения и переносит
+записи в одной транзакции, сохраняя ID и внешние ключи. Команда рассчитана
+на однократное заполнение пустых таблиц предметной области. Путь к другой
+копии базы можно указать параметром `--source`.
 
-Создайте и активируйте виртуальное окружение, затем установите зависимости:
+### Запуск
 
-```bash
+```powershell
 python -m venv .venv
-# Windows PowerShell:
 .venv\Scripts\Activate.ps1
-# Установка зависимостей:
-pip install -r requirements.txt
-```
-
-Создайте структуру SQLite и импортируйте данные из JSON:
-
-```bash
-python -m db.import_json
-```
-
-Скрипт сам выполняет `sql/schema.sql`, включает проверку внешних ключей и
-переносит категории, блюда, пользователей и заказы. Повторный запуск импорта
-перезаписывает содержимое таблиц актуальными данными из JSON.
-
-Запустите проверки и сервер:
-
-```bash
-python manage.py check
-pytest -v
-flake8 . --extend-exclude=venv,.venv
+python -m pip install -r requirements.txt
+python manage.py migrate
+python manage.py import_pr7
 python manage.py runserver
 ```
 
-Откройте сайт по адресу `http://127.0.0.1:8000/`.
+Выполняйте `import_pr7` только при первом заполнении базы. Если исходной
+базы ПР7 нет, создайте её из JSON командой `python -m db.import_json`.
 
-## Этапы разработки
+| Страница | Сценарий |
+|---|---|
+| `/` | Главная страница |
+| `/menu/` | Поиск по названию и описанию, фильтры по категории, цене и наличию |
+| `/menu/<id>/` | Блюдо и его категория |
+| `/orders/` | Поиск по блюду и покупателю, фильтр по статусу, сортировка |
+| `/orders/<id>/` | Заказ, связанные блюдо и покупатель, сумма со скидкой |
+| `/statistics/` | Сводные показатели и количество блюд по категориям |
+| `/admin/` | Создание, редактирование и удаление записей |
 
-- ПР1–ПР5: предметная область, классы, JSON-хранилище, консольная и Django-часть.
-- ПР6: шаблоны Django, наследование шаблонов, статические файлы и навигация.
-- ПР7: реляционная структура SQLite, импорт JSON, SQL-запросы и получение
-  данных из базы в Django-представлениях через стандартную библиотеку `sqlite3`.
+Для доступа к админке создайте учётную запись командой
+`python manage.py createsuperuser`. Списки меню и заказов показывают по
+пять записей на страницу. Ссылки «Назад» и «Вперёд» сохраняют параметры
+поиска, фильтрации и сортировки.
 
-На данном этапе Django ORM не используется. JSON-хранилище сохранено, а SQLite
-добавлена как отдельный слой хранения данных для изучения SQL.
+### ORM-запросы для демонстрации
+
+| Выражение | Где используется |
+|---|---|
+| `Order.objects.all()` | Исходный список заказов |
+| `Category.objects.order_by("name")` | Категории в фильтре меню |
+| `Dish.objects.select_related("category")` | Меню и карточка блюда |
+| `get_object_or_404(queryset, pk=dish_id)` | Карточка блюда |
+| `filter(category_id=category_id)` | Блюда выбранной категории |
+| `filter(price__lte=max_price)` | Блюда до указанной цены |
+| `filter(category_id=category_id, price__lte=max_price)` | Совместный фильтр категории и цены |
+| `exclude(in_stock=False)` | Доступные блюда |
+| `filter(Q(name__iregex=pattern) \| Q(description__iregex=pattern))` | Поиск по названию или описанию |
+| `filter(dish__name__iregex=pattern)` | Заказы с указанным блюдом |
+| `filter(user__name__iregex=pattern)` | Заказы покупателя |
+| `exclude(is_cancelled=True)` | Активные заказы |
+| `order_by("price", "name", "pk")` | Сортировка меню по цене с устойчивым порядком страниц |
+| `order_by("dish__name", "id")` | Сортировка заказов по связанному блюду |
+| `annotate(dish_name=F("dish__name"), ...).values(...)` | Подготовка сокращённых строк списка заказов |
+| `Order.objects.select_related("dish", "user")` | Связанные данные в карточке заказа |
+| `Dish.objects.aggregate(...)` | Количество блюд и статистика цен |
+| `Order.objects.aggregate(...)` | Сводка по заказам и активным заказам |
+| `Category.objects.annotate(dishes_count=Count("dishes"), ...)` | Количество блюд, включая пустые категории |
+| `Paginator(queryset, 5).get_page(...)` | Списки блюд и заказов |
+
+Поиск использует экранированный шаблон `iregex`, чтобы в SQLite
+сопоставлять кириллицу без учёта регистра и искать введённые символы
+буквально. Админка Django предоставляет CRUD. В Django shell те же
+операции можно показать на временной категории:
+
+```python
+from menu.models import Category
+category = Category.objects.create(name="Категория для демонстрации")
+category = Category.objects.get(pk=category.pk)
+category.name = "Обновлённая категория"
+category.save(update_fields=["name"])
+assert Category.objects.get(pk=category.pk).name == "Обновлённая категория"
+category.delete()
+```
+
+Для проверки прямой и обратной связи в shell можно выполнить
+`order = Order.objects.select_related("dish", "user").first()`,
+`order.dish.category`, `order.user` и `order.user.orders.all()`.
+
+### Проверки
+
+```powershell
+python manage.py check
+python manage.py showmigrations menu orders
+python manage.py makemigrations --check --dry-run
+python -m pytest -v
+python -m flake8 .
+```
+
+Для запуска Flake8 с явным параметром исключения используйте
+`--extend-exclude=venv,.venv,migrations,__pycache__,menu_project/settings.py`.
+При передаче этого параметра Flake8 использует список из командной строки.

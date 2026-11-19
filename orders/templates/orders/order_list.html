@@ -4,12 +4,42 @@
 
 {% block content %}
     <h1>Заказы</h1>
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md">
+            <label for="dish-search" class="form-label">Блюдо</label>
+            <input id="dish-search" name="q" value="{{ search }}" class="form-control">
+        </div>
+        <div class="col-md">
+            <label for="customer" class="form-label">Покупатель</label>
+            <input id="customer" name="customer" value="{{ customer }}" class="form-control">
+        </div>
+        <div class="col-md">
+            <label for="status" class="form-label">Статус</label>
+            <select id="status" name="status" class="form-select">
+                <option value="">Все</option>
+                <option value="active" {% if status_filter == "active" %}selected{% endif %}>Активные</option>
+                <option value="cancelled" {% if status_filter == "cancelled" %}selected{% endif %}>Отменённые</option>
+            </select>
+        </div>
+        <div class="col-md">
+            <label for="sort" class="form-label">Сортировка</label>
+            <select id="sort" name="sort" class="form-select">
+                <option value="id">По номеру</option>
+                <option value="-id" {% if sort == "-id" %}selected{% endif %}>Сначала новые</option>
+                <option value="dish" {% if sort == "dish" %}selected{% endif %}>По блюду</option>
+                <option value="total" {% if sort == "total" %}selected{% endif %}>По сумме</option>
+            </select>
+        </div>
+        <div class="col-md-auto d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Найти</button>
+        </div>
+    </form>
     <ul class="list-group">
     {% for order in orders %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
             <div>
                 <a href="{% url 'orders:detail' order.id %}">Заказ №{{ order.id }}</a>
-                <br><small class="text-muted">{{ order.dish_name }}</small>
+                <br><small class="text-muted">{{ order.dish_name }} · {{ order.user_name }}</small>
             </div>
             <div>
                 {{ order.total }} руб.
@@ -20,4 +50,5 @@
         <li class="list-group-item">Заказы не найдены.</li>
     {% endfor %}
     </ul>
+    {% include "includes/pagination.html" %}
 {% endblock %}

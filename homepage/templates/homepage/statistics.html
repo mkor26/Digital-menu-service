@@ -10,9 +10,9 @@
         <div class="col-md-4"><div class="card"><div class="card-body"><h2 class="h5">Активные заказы</h2><p class="display-6">{{ orders_count.active_orders|default:0 }}</p></div></div></div>
     </div>
     <h2>Цены</h2>
-    <p>Минимальная: {{ summary.min_price|default:"—" }} руб.</p>
-    <p>Максимальная: {{ summary.max_price|default:"—" }} руб.</p>
-    <p>Средняя: {{ summary.average_price|default:"—" }} руб.</p>
+    <p>Минимальная: {{ summary.min_price|default_if_none:"—" }} руб.</p>
+    <p>Максимальная: {{ summary.max_price|default_if_none:"—" }} руб.</p>
+    <p>Средняя: {{ summary.average_price|default_if_none:"—" }} руб.</p>
     <h2 class="mt-4">Количество блюд по категориям</h2>
     <table class="table table-striped">
         <thead><tr><th>Категория</th><th>Количество блюд</th></tr></thead>

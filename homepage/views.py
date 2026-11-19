@@ -1,6 +1,9 @@
+from django.db.models import Avg, Count, F, Max, Min, Q
+from django.db.models.functions import Round
 from django.shortcuts import render
 
-from db.database import get_statistics
+from menu.models import Category, Dish
+from orders.models import Order
 
 
 def index(request):
@@ -8,7 +11,20 @@ def index(request):
 
 
 def statistics(request):
-    summary, categories, orders_count = get_statistics()
+    summary = Dish.objects.aggregate(
+        dishes_count=Count("pk"),
+        available_count=Count("pk", filter=Q(in_stock=True)),
+        min_price=Min("price"),
+        max_price=Max("price"),
+        average_price=Round(Avg("price"), precision=2),
+    )
+    categories = Category.objects.annotate(
+        category=F("name"), dishes_count=Count("dishes"),
+    ).values("category", "dishes_count").order_by("name")
+    orders_count = Order.objects.aggregate(
+        orders_count=Count("pk"),
+        active_orders=Count("pk", filter=Q(is_cancelled=False)),
+    )
     return render(
         request,
         "homepage/statistics.html",

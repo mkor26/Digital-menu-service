@@ -102,7 +102,8 @@ def get_order(order_id):
 def get_statistics():
     summary = fetch_one(
         """SELECT COUNT(*) AS dishes_count,
-                  SUM(CASE WHEN in_stock = 1 THEN 1 ELSE 0 END) AS available_count,
+                  SUM(CASE WHEN in_stock = 1 THEN 1 ELSE 0 END)
+                      AS available_count,
                   MIN(price) AS min_price, MAX(price) AS max_price,
                   ROUND(AVG(price), 2) AS average_price
            FROM dishes"""
@@ -115,7 +116,8 @@ def get_statistics():
     )
     orders_count = fetch_one(
         """SELECT COUNT(*) AS orders_count,
-                  SUM(CASE WHEN is_cancelled = 0 THEN 1 ELSE 0 END) AS active_orders
+                  SUM(CASE WHEN is_cancelled = 0 THEN 1 ELSE 0 END)
+                      AS active_orders
            FROM orders"""
     )
     return summary, categories, orders_count

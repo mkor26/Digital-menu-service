@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{% load l10n %}
 
 {% block title %}Меню - Электронное меню{% endblock %}
 
 {% block content %}
     <h1>Меню</h1>
-    <p>Найдено блюд: {{ dishes|length }}</p>
+    <p>Найдено блюд: {{ page_obj.paginator.count }}</p>
 
     <form method="get" class="row g-3 mb-4">
         <div class="col-md-4">
@@ -18,13 +19,26 @@
         </div>
         <div class="col-md-3">
             <label for="max_price" class="form-label">Максимальная цена</label>
-            <input id="max_price" name="max_price" type="number" min="0" step="0.01" value="{{ max_price|default_if_none:'' }}" class="form-control">
+            <input id="max_price" name="max_price" type="number" min="0" step="0.01" value="{{ max_price|unlocalize|default_if_none:'' }}" class="form-control">
         </div>
         <div class="col-md-3 d-flex align-items-end">
             <div class="form-check">
                 <input id="available" name="available" value="1" type="checkbox" class="form-check-input" {% if available_only %}checked{% endif %}>
                 <label for="available" class="form-check-label">Только в наличии</label>
             </div>
+        </div>
+        <div class="col-md-6">
+            <label for="search" class="form-label">Название или описание</label>
+            <input id="search" name="q" value="{{ search }}" class="form-control">
+        </div>
+        <div class="col-md-4">
+            <label for="sort" class="form-label">Сортировка</label>
+            <select id="sort" name="sort" class="form-select">
+                <option value="name">По названию</option>
+                <option value="price" {% if sort == "price" %}selected{% endif %}>Сначала дешевле</option>
+                <option value="-price" {% if sort == "-price" %}selected{% endif %}>Сначала дороже</option>
+                <option value="category" {% if sort == "category" %}selected{% endif %}>По категории</option>
+            </select>
         </div>
         <div class="col-md-2 d-flex align-items-end">
             <button type="submit" class="btn btn-primary">Найти</button>
@@ -36,4 +50,5 @@
     {% empty %}
         <p>Блюда по заданным условиям не найдены.</p>
     {% endfor %}
+    {% include "includes/pagination.html" %}
 {% endblock %}
