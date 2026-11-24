@@ -23,7 +23,9 @@ def statistics(request):
     ).values("category", "dishes_count").order_by("name")
     orders_count = Order.objects.aggregate(
         orders_count=Count("pk"),
-        active_orders=Count("pk", filter=Q(is_cancelled=False)),
+        active_orders=Count("pk", filter=Q(status=Order.Status.ACTIVE)),
+        cancelled_orders=Count("pk", filter=Q(status=Order.Status.CANCELLED)),
+        completed_orders=Count("pk", filter=Q(status=Order.Status.COMPLETED)),
     )
     return render(
         request,

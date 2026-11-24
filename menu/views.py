@@ -1,10 +1,17 @@
 import re
+from datetime import date
 from math import isfinite
 
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import Http404
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_http_methods
+
+from orders.models import Order
+
+from .forms import DishImageForm
 
 from .models import Category, Dish
 
@@ -55,6 +62,20 @@ def dishes(request):
             Q(name__iregex=pattern) | Q(description__iregex=pattern),
         )
 
+    day = request.GET.get("date", "")
+    date_error = False
+    if day:
+        try:
+            selected_date = date.fromisoformat(day)
+        except ValueError:
+            date_error = True
+        else:
+            booked = (
+                Order.objects.active().for_date(selected_date)
+                .values_list("dish_id", flat=True)
+            )
+            queryset = queryset.filter(in_stock=True).exclude(pk__in=booked)
+
     page_obj = Paginator(queryset.order_by(*MENU_SORTS[sort]), 5).get_page(
         request.GET.get("page"),
     )
@@ -70,15 +91,35 @@ def dishes(request):
             "available_only": available_only,
             "search": search,
             "sort": sort,
+            "date": day,
+            "date_error": date_error,
         },
     )
 
 
-def dish_detail(request, dish_id):
+def dish_detail(request, dish_id=None, slug=None):
+    lookup = {"pk": dish_id} if dish_id is not None else {"slug": slug}
     try:
         dish = get_object_or_404(
-            Dish.objects.select_related("category"), pk=dish_id,
+            Dish.objects.select_related("category"), **lookup,
         )
     except Http404:
         return render(request, "menu/dish_detail.html", status=404)
     return render(request, "menu/dish_detail.html", {"dish": dish})
+
+
+@staff_member_required
+@require_http_methods(["GET", "POST"])
+def dish_image(request, slug):
+    dish = get_object_or_404(Dish, slug=slug)
+    form = DishImageForm(instance=dish)
+    if request.method == "POST":
+        form = DishImageForm(request.POST, request.FILES, instance=dish)
+        if form.is_valid():
+            form.save()
+            return redirect(dish)
+    return render(
+        request,
+        "form.html",
+        {"form": form, "title": f"Фото блюда «{dish.name}»"},
+    )

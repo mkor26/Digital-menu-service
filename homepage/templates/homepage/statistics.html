@@ -9,6 +9,7 @@
         <div class="col-md-4"><div class="card"><div class="card-body"><h2 class="h5">В наличии</h2><p class="display-6">{{ summary.available_count|default:0 }}</p></div></div></div>
         <div class="col-md-4"><div class="card"><div class="card-body"><h2 class="h5">Активные заказы</h2><p class="display-6">{{ orders_count.active_orders|default:0 }}</p></div></div></div>
     </div>
+    <p>Заказов: {{ orders_count.orders_count }}. Отменено: {{ orders_count.cancelled_orders }}. Завершено: {{ orders_count.completed_orders }}.</p>
     <h2>Цены</h2>
     <p>Минимальная: {{ summary.min_price|default_if_none:"—" }} руб.</p>
     <p>Максимальная: {{ summary.max_price|default_if_none:"—" }} руб.</p>

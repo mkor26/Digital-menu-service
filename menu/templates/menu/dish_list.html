@@ -21,6 +21,11 @@
             <label for="max_price" class="form-label">Максимальная цена</label>
             <input id="max_price" name="max_price" type="number" min="0" step="0.01" value="{{ max_price|unlocalize|default_if_none:'' }}" class="form-control">
         </div>
+        <div class="col-md-3">
+            <label for="date">Доступность на дату</label>
+            <input id="date" name="date" type="date" class="form-control" value="{{ date }}">
+            {% if date_error %}<p class="text-danger">Укажите корректную дату.</p>{% endif %}
+        </div>
         <div class="col-md-3 d-flex align-items-end">
             <div class="form-check">
                 <input id="available" name="available" value="1" type="checkbox" class="form-check-input" {% if available_only %}checked{% endif %}>

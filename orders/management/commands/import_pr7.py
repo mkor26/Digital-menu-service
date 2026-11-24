@@ -25,6 +25,17 @@ TABLES = (
 )
 
 
+def build_object(table, model, values):
+    if table == "dishes":
+        values["slug"] = f"dish-{values['id']}"
+    elif table == "orders":
+        cancelled = values.pop("is_cancelled")
+        values["status"] = (
+            Order.Status.CANCELLED if cancelled else Order.Status.ACTIVE
+        )
+    return model(**values)
+
+
 class Command(BaseCommand):
     help = "Переносит записи ПР7 в модели Django с сохранением ID и связей."
 
@@ -42,7 +53,7 @@ class Command(BaseCommand):
                 db.execute("BEGIN")
                 batches = [
                     (table, model, [
-                        model(**dict(zip(fields, row)))
+                        build_object(table, model, dict(zip(fields, row)))
                         for row in db.execute(
                             f"SELECT {', '.join(fields)} FROM {table}",
                         )

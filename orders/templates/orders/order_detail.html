@@ -11,7 +11,8 @@
                 <h1 class="card-title">Заказ №{{ order.id }}</h1>
                 <p class="card-text"><strong>Блюдо:</strong> {{ order.dish.name }}</p>
                 <p class="card-text"><strong>Пользователь:</strong> {{ order.user.name }}</p>
-                <p class="card-text"><strong>Эл. почта:</strong> {{ order.user.email }}</p>
+                <p class="card-text"><strong>Электронная почта:</strong> {{ order.user.email }}</p>
+                <p class="card-text"><strong>Дата предзаказа:</strong> {{ order.order_date|date:"d.m.Y"|default:"Дата не указана" }}</p>
                 <p class="card-text"><strong>Количество:</strong> {{ order.quantity }}</p>
                 <p class="card-text"><strong>Скидка:</strong> {{ order.discount_percent }}%</p>
                 <p class="card-text"><strong>Сумма:</strong> {{ order.total }} руб.</p>
@@ -23,6 +24,15 @@
         </div>
     {% else %}
         <h1 class="text-danger">Заказ не найден</h1>
+    {% endif %}
+    {% if request.user.is_staff and order.status == "active" %}
+        <div class="d-flex gap-2 mt-3">
+            <a class="btn btn-primary" href="{% url 'orders:edit' order.pk %}">Изменить</a>
+            <form method="post" action="{% url 'orders:cancel' order.pk %}">
+                {% csrf_token %}
+                <button class="btn btn-outline-danger" type="submit">Отменить заказ</button>
+            </form>
+        </div>
     {% endif %}
     <a href="{% url 'orders:orders' %}" class="btn btn-outline-secondary mt-3">← к заказам</a>
 {% endblock %}
